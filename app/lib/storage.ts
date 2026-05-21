@@ -1,7 +1,8 @@
-// Utility functions for API calls and local storage
-import { Topic, Flashcard, Quiz, UserProgress, QuizAttempt } from '@/app/types';
+// app/lib/storage.ts
+// 1. Swapped path alias to a clean relative import and used TopicProgress
+import { Topic, Flashcard, Quiz, TopicProgress } from '../types';
 
-// Local Storage Functions
+// Local Storage Keys
 export const localStorageKeys = {
   topics: 'study_buddy_topics',
   flashcards: 'study_buddy_flashcards',
@@ -52,13 +53,15 @@ export function getQuizzes(): Quiz[] {
   return [];
 }
 
-export function saveProgress(progress: UserProgress[]) {
+// 2. Bound saveProgress tightly to your TopicProgress contract
+export function saveProgress(progress: TopicProgress[]) {
   if (typeof window !== 'undefined') {
     localStorage.setItem(localStorageKeys.progress, JSON.stringify(progress));
   }
 }
 
-export function getProgress(): UserProgress[] {
+// 3. Bound getProgress tightly to your TopicProgress contract
+export function getProgress(): TopicProgress[] {
   if (typeof window !== 'undefined') {
     const data = localStorage.getItem(localStorageKeys.progress);
     return data ? JSON.parse(data) : [];

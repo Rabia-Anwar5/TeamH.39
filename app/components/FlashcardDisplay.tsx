@@ -1,8 +1,8 @@
-// Flashcard component
+// app/components/FlashcardDisplay.tsx
 'use client';
 
 import React, { useState } from 'react';
-import { Flashcard } from '@/app/types';
+import { Flashcard } from '../types';
 
 interface FlashcardDisplayProps {
   flashcards: Flashcard[];
@@ -14,75 +14,80 @@ export default function FlashcardDisplay({ flashcards }: FlashcardDisplayProps) 
 
   if (!flashcards || flashcards.length === 0) {
     return (
-      <div className="text-center text-gray-500 dark:text-gray-400">
-        No flashcards available
+      <div className="text-center text-gray-500 py-12">
+        No flashcards available for this topic.
       </div>
     );
   }
 
-  const current = flashcards[currentIndex];
+  const currentCard = flashcards[currentIndex];
 
   const handleNext = () => {
     setIsFlipped(false);
-    setCurrentIndex((prev) => (prev + 1) % flashcards.length);
+    setTimeout(() => {
+      setCurrentIndex((prev) => (prev + 1) % flashcards.length);
+    }, 150);
   };
 
-  const handlePrevious = () => {
+  const handlePrev = () => {
     setIsFlipped(false);
-    setCurrentIndex((prev) => (prev - 1 + flashcards.length) % flashcards.length);
+    setTimeout(() => {
+      setCurrentIndex((prev) => (prev - 1 + flashcards.length) % flashcards.length);
+    }, 150);
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
-      <h3 className="text-2xl font-bold text-center mb-6">Flashcards</h3>
-      
-      <div className="mb-6 text-center text-gray-600 dark:text-gray-400">
+    <div className="w-full max-w-xl mx-auto flex flex-col items-center justify-center min-h-[350px]">
+      {/* Progress Pill Indicator */}
+      <div className="mb-4 text-xs font-semibold tracking-wider text-blue-600 dark:text-blue-400 uppercase bg-blue-50 dark:bg-blue-950/50 px-3 py-1 rounded-full">
         Card {currentIndex + 1} of {flashcards.length}
       </div>
 
-      <div
+      {/* Flipping Card Container */}
+      <div 
         onClick={() => setIsFlipped(!isFlipped)}
-        className="relative h-64 cursor-pointer mb-6"
+        className="w-full h-56 cursor-pointer perspective-1000 group outline-none"
       >
-        <div
-          className={`absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg shadow-lg p-8 flex items-center justify-center transition-all duration-300 ${
-            isFlipped ? 'opacity-0 pointer-events-none' : 'opacity-100'
-          }`}
-        >
-          <div className="text-center text-white">
-            <p className="text-sm text-blue-100 mb-2">Question</p>
-            <p className="text-2xl font-semibold">{current.question}</p>
+        <div className={`relative w-full h-full duration-500 transform-style-3d shadow-md hover:shadow-xl border border-gray-100 dark:border-gray-800 rounded-2xl transition-all ${
+          isFlipped ? 'rotate-y-180 bg-blue-50/20 dark:bg-gray-800' : 'bg-white dark:bg-gray-850'
+        }`}>
+          {/* FRONT Side */}
+          <div className="absolute inset-0 w-full h-full p-6 flex flex-col justify-center items-center backface-hidden">
+            <span className="text-xs uppercase text-gray-400 tracking-widest font-bold mb-3 block">Concept / Question</span>
+            <p className="text-xl font-semibold text-center text-black dark:text-white max-w-md balance leading-relaxed">
+              {currentCard.front}
+            </p>
+            <span className="text-xs text-gray-400 mt-6 group-hover:text-blue-500 transition-colors">
+              Click card to reveal answer 🔄
+            </span>
           </div>
-        </div>
 
-        <div
-          className={`absolute inset-0 bg-gradient-to-br from-green-500 to-teal-600 rounded-lg shadow-lg p-8 flex items-center justify-center transition-all duration-300 ${
-            !isFlipped ? 'opacity-0 pointer-events-none' : 'opacity-100'
-          }`}
-        >
-          <div className="text-center text-white">
-            <p className="text-sm text-green-100 mb-2">Answer</p>
-            <p className="text-2xl font-semibold">{current.answer}</p>
+          {/* BACK Side */}
+          <div className="absolute inset-0 w-full h-full p-6 flex flex-col justify-center items-center backface-hidden rotate-y-180 bg-blue-50/10 dark:bg-blue-950/10">
+            <span className="text-xs uppercase text-blue-500 dark:text-blue-400 tracking-widest font-bold mb-3 block">Answer / Insight</span>
+            <p className="text-lg text-center text-gray-800 dark:text-gray-200 max-w-md leading-relaxed">
+              {currentCard.back}
+            </p>
+            <span className="text-xs text-gray-400 mt-6">
+              Click to flip back 🔄
+            </span>
           </div>
         </div>
       </div>
 
-      <div className="text-center text-sm text-gray-600 dark:text-gray-400 mb-6">
-        Click card to flip • {isFlipped ? 'Showing answer' : 'Showing question'}
-      </div>
-
-      <div className="flex justify-between gap-4">
+      {/* Navigation Toolbar */}
+      <div className="flex gap-4 mt-8 w-full justify-between items-center px-2">
         <button
-          onClick={handlePrevious}
-          className="px-6 py-2 bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-medium rounded-lg hover:bg-gray-400 dark:hover:bg-gray-600 transition-colors"
+          onClick={(e) => { e.stopPropagation(); handlePrev(); }}
+          className="px-4 py-2 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 text-black dark:text-white rounded-xl text-sm font-medium transition-colors cursor-pointer"
         >
           ← Previous
         </button>
         <button
-          onClick={handleNext}
-          className="px-6 py-2 bg-gray-300 dark:bg-gray-700 text-black dark:text-white font-medium rounded-lg hover:bg-gray-400 dark:hover:bg-gray-600 transition-colors"
+          onClick={(e) => { e.stopPropagation(); handleNext(); }}
+          className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-medium transition-colors shadow-sm cursor-pointer"
         >
-          Next →
+          Next Card →
         </button>
       </div>
     </div>

@@ -2,11 +2,12 @@
 
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import Navbar from '@/app/components/Navbar';
-import FlashcardDisplay from '@/app/components/FlashcardDisplay';
-import QuizDisplay from '@/app/components/QuizDisplay';
-import { useStudy } from '@/app/context/StudyContext';
-import { Topic } from '@/app/types';
+// 1. Updated path alias routes to clean relative positions
+import Navbar from '../components/Navbar';
+import FlashcardDisplay from '../components/FlashcardDisplay';
+import QuizDisplay from '../components/QuizDisplay';
+import { useStudy } from '../context/StudyContext';
+import { Topic } from '../types';
 
 function TopicsPageContent() {
   const searchParams = useSearchParams();
@@ -66,18 +67,19 @@ function TopicsPageContent() {
             >
               ← Back
             </a>
+            {/* 2. Re-mapped fields to use .name and .summary properties */}
             <h1 className="text-4xl font-bold text-black dark:text-white mb-2">
-              {currentTopic.title}
+              {currentTopic.name}
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
-              {currentTopic.description}
+              {currentTopic.summary}
             </p>
           </div>
 
           <div className="flex gap-4 mb-8 flex-wrap">
             <button
               onClick={() => setActiveTab('flashcards')}
-              className={`px-6 py-2 rounded-lg font-medium transition-colors ${
+              className={`px-6 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
                 activeTab === 'flashcards'
                   ? 'bg-blue-600 text-white'
                   : 'bg-white dark:bg-gray-900 text-black dark:text-white border border-gray-200 dark:border-gray-700'
@@ -87,7 +89,7 @@ function TopicsPageContent() {
             </button>
             <button
               onClick={() => setActiveTab('quiz')}
-              className={`px-6 py-2 rounded-lg font-medium transition-colors ${
+              className={`px-6 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
                 activeTab === 'quiz'
                   ? 'bg-blue-600 text-white'
                   : 'bg-white dark:bg-gray-900 text-black dark:text-white border border-gray-200 dark:border-gray-700'
@@ -97,22 +99,23 @@ function TopicsPageContent() {
             </button>
           </div>
 
-          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-8 min-h-96">
+          <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 shadow-lg p-6 sm:p-8 min-h-96">
             {activeTab === 'flashcards' ? (
               flashcards.length > 0 ? (
                 <FlashcardDisplay flashcards={flashcards} />
               ) : (
                 <div className="text-center text-gray-500 dark:text-gray-400 py-12">
-                  <p className="text-lg mb-4">No flashcards available yet</p>
-                  <p className="text-sm">Flashcards will be generated with AI integration</p>
+                  <p className="text-lg mb-2 font-medium">No flashcards available yet</p>
+                  <p className="text-sm opacity-80">Flashcards will be generated with AI integration</p>
                 </div>
               )
             ) : quiz ? (
-              <QuizDisplay quiz={quiz} onComplete={handleQuizComplete} />
+              // Passed the current topic name into the quiz header context mapping
+              <QuizDisplay quiz={quiz} topicName={currentTopic.name} onComplete={handleQuizComplete} />
             ) : (
               <div className="text-center text-gray-500 dark:text-gray-400 py-12">
-                <p className="text-lg mb-4">No quiz available yet</p>
-                <p className="text-sm">Quizzes will be generated with AI integration</p>
+                <p className="text-lg mb-2 font-medium">No quiz available yet</p>
+                <p className="text-sm opacity-80">Quizzes will be generated with AI integration</p>
               </div>
             )}
           </div>
@@ -129,7 +132,7 @@ export default function TopicsPage() {
         <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-black">
           <Navbar />
           <main className="flex-1 flex items-center justify-center">
-            <p className="text-gray-600 dark:text-gray-400">Loading...</p>
+            <p className="text-gray-600 dark:text-gray-400 animate-pulse font-medium">Loading Topic Details...</p>
           </main>
         </div>
       }

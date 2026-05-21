@@ -1,8 +1,9 @@
-// Context for managing study materials and progress
+// app/context/StudyContext.tsx
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Topic, Flashcard, Quiz, UserProgress } from '@/app/types';
+// 1. Fixed path aliases to relative locations
+import { Topic, Flashcard, Quiz, TopicProgress } from '../types';
 import {
   getTopics,
   saveTopics,
@@ -13,17 +14,17 @@ import {
   getProgress,
   saveProgress,
   generateId,
-} from '@/app/lib/storage';
+} from '../lib/storage';
 
 interface StudyContextType {
   topics: Topic[];
   flashcards: Flashcard[];
   quizzes: Quiz[];
-  progress: UserProgress[];
+  progress: TopicProgress[];
   currentTopic: Topic | null;
   
-  addTopic: (title: string, description: string) => void;
-  addFlashcard: (topicId: string, question: string, answer: string) => void;
+  addTopic: (name: string, summary: string) => void;
+  addFlashcard: (topicId: string, front: string, back: string) => void;
   addQuiz: (quiz: Quiz) => void;
   updateProgress: (topicId: string, score: number, total: number) => void;
   getFlashcardsForTopic: (topicId: string) => Flashcard[];
@@ -38,56 +39,42 @@ export function StudyProvider({ children }: { children: React.ReactNode }) {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
-  const [progress, setProgress] = useState<UserProgress[]>([]);
+  // 2. Transformed array type directly into TopicProgress to match data consumers
+  const [progress, setProgress] = useState<TopicProgress[]>([]);
   const [currentTopic, setCurrentTopic] = useState<Topic | null>(null);
 
-  // Load data from localStorage on mount
+  // Load data from localStorage safely on mount
   useEffect(() => {
-    setTopics(getTopics());
-    setFlashcards(getFlashcards());
-    setQuizzes(getQuizzes());
-    setProgress(getProgress());
+    setTopics(getTopics() || []);
+    setFlashcards(getFlashcards() || []);
+    setQuizzes(getQuizzes() || []);
+    setProgress(getProgress() || []);
   }, []);
 
-  // Save topics whenever they change
-  useEffect(() => {
-    saveTopics(topics);
-  }, [topics]);
+  // Sync operations
+  useEffect(() => { saveTopics(topics); }, [topics]);
+  useEffect(() => { saveFlashcards(flashcards); }, [flashcards]);
+  useEffect(() => { saveQuizzes(quizzes); }, [quizzes]);
+  useEffect(() => { saveProgress(progress); }, [progress]);
 
-  // Save flashcards whenever they change
-  useEffect(() => {
-    saveFlashcards(flashcards);
-  }, [flashcards]);
-
-  // Save quizzes whenever they change
-  useEffect(() => {
-    saveQuizzes(quizzes);
-  }, [quizzes]);
-
-  // Save progress whenever it changes
-  useEffect(() => {
-    saveProgress(progress);
-  }, [progress]);
-
-  const addTopic = (title: string, description: string) => {
+  const addTopic = (name: string, summary: string) => {
+    // 3. Re-mapped fields from (title/description) to correct type contracts (name/summary)
     const newTopic: Topic = {
       id: generateId(),
-      title,
-      description,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      name,
+      summary,
+      createdAt: new Date().toISOString(),
     };
     setTopics([...topics, newTopic]);
   };
 
-  const addFlashcard = (topicId: string, question: string, answer: string) => {
+  const addFlashcard = (topicId: string, front: string, back: string) => {
+    // 4. Re-mapped from (question/answer) to proper type contracts (front/back)
     const newFlashcard: Flashcard = {
       id: generateId(),
       topicId,
-      question,
-      answer,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      front,
+      back,
     };
     setFlashcards([...flashcards, newFlashcard]);
   };
@@ -98,20 +85,20 @@ export function StudyProvider({ children }: { children: React.ReactNode }) {
 
   const updateProgress = (topicId: string, score: number, total: number) => {
     const existingProgress = progress.find((p) => p.topicId === topicId);
-    const newProgress: UserProgress = {
-      id: existingProgress?.id || generateId(),
-      userId: 'user_1', // TODO: Replace with actual user ID
+    
+    // Calculates precision metrics based on current active state properties
+    const calculatedScore = total > 0 ? (score / total) * 100 : 0;
+    const completedCount = (existingProgress?.quizzesCompleted || 0) + 1;
+    
+    const newProgress: TopicProgress = {
       topicId,
       flashcardsLearned: existingProgress?.flashcardsLearned || 0,
-      quizzesCompleted: (existingProgress?.quizzesCompleted || 0) + 1,
+      quizzesCompleted: completedCount,
       averageScore:
         existingProgress && existingProgress.quizzesCompleted > 0
-          ? (existingProgress.averageScore * existingProgress.quizzesCompleted + (score / total) * 100) /
-            (existingProgress.quizzesCompleted + 1)
-          : (score / total) * 100,
-      lastReviewDate: new Date(),
-      createdAt: existingProgress?.createdAt || new Date(),
-      updatedAt: new Date(),
+          ? (existingProgress.averageScore * existingProgress.quizzesCompleted + calculatedScore) / completedCount
+          : calculatedScore,
+      lastReviewDate: new Date().toISOString(),
     };
 
     if (existingProgress) {

@@ -1,16 +1,17 @@
-// Topic input form component
+// app/components/TopicInput.tsx
 'use client';
 
 import React, { useState } from 'react';
-import { useStudy } from '@/app/context/StudyContext';
-import { Quiz } from '@/app/types';
-import { generateId } from '@/app/lib/storage';
+// 1. Fixed path imports to direct relative paths
+import { useStudy } from '../context/StudyContext';
+import { Quiz, QuizQuestion } from '../types';
+import { generateId } from '../lib/storage';
 
 export default function TopicInput() {
   const [topic, setTopic] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const { addTopic, addFlashcard, addQuiz, setCurrentTopic } = useStudy();
+  const { addTopic, addFlashcard, addQuiz } = useStudy();
 
   const generateMockFlashcards = (topicName: string, topicId: string) => {
     const mockQuestions = [
@@ -35,9 +36,9 @@ export default function TopicInput() {
   };
 
   const generateMockQuiz = (topicName: string, topicId: string) => {
-    const mockQuestions = [
+    // 2. Aligned this array strictly with the QuizQuestion type contract
+    const mockQuestions: QuizQuestion[] = [
       {
-        id: generateId(),
         question: `Which statement best describes ${topicName}?`,
         options: [
           'Option A: A comprehensive approach to understanding',
@@ -46,10 +47,8 @@ export default function TopicInput() {
           'Option D: A basic introduction only',
         ],
         correctAnswer: 'Option A: A comprehensive approach to understanding',
-        explanation: `${topicName} is best described as a comprehensive approach that encompasses multiple dimensions.`,
       },
       {
-        id: generateId(),
         question: `What is the primary focus of ${topicName}?`,
         options: [
           'Understanding foundational concepts',
@@ -58,10 +57,8 @@ export default function TopicInput() {
           'Avoiding complex topics',
         ],
         correctAnswer: 'Understanding foundational concepts',
-        explanation: `The primary focus is to build a strong understanding of foundational concepts that support higher-level knowledge.`,
       },
       {
-        id: generateId(),
         question: `How can ${topicName} be applied?`,
         options: [
           'In various real-world contexts and industries',
@@ -70,17 +67,13 @@ export default function TopicInput() {
           'Limited to specific scenarios',
         ],
         correctAnswer: 'In various real-world contexts and industries',
-        explanation: `${topicName} has broad applications across multiple industries and real-world contexts.`,
       },
     ];
 
     const quiz: Quiz = {
       id: generateId(),
       topicId,
-      title: `${topicName} Quiz`,
       questions: mockQuestions,
-      createdAt: new Date(),
-      updatedAt: new Date(),
     };
 
     addQuiz(quiz);
@@ -134,7 +127,7 @@ export default function TopicInput() {
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
             placeholder="e.g., World War 2, Photosynthesis, Python Basics..."
-            className="mt-2 w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="mt-2 w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
             disabled={isLoading}
           />
         </div>
@@ -142,7 +135,7 @@ export default function TopicInput() {
         <button
           type="submit"
           disabled={isLoading || !topic.trim()}
-          className="w-full px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors"
+          className="w-full px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors cursor-pointer"
         >
           {isLoading ? 'Generating...' : 'Generate Study Materials'}
         </button>

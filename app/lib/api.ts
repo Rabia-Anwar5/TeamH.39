@@ -1,5 +1,6 @@
-// API call functions
-import { Topic, Flashcard, Quiz } from '@/app/types';
+// app/lib/api.ts
+// Swapped absolute import path alias to direct relative path to clear compilation errors
+import { Topic, Flashcard, Quiz } from '../types';
 
 export async function generateStudyMaterials(topic: string) {
   const response = await fetch('/api/generate', {
