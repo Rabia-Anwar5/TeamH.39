@@ -85,28 +85,44 @@ export default function TopicInput() {
 
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-md mx-auto">
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-5">
         <div>
-          <label htmlFor="topic" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            What topic would you like to study?
+          <label htmlFor="topic" className="block text-sm font-bold text-neutral-600 dark:text-neutral-300 font-display flex items-center gap-1">
+            <span>What topic would you like to study?</span> <span className="text-girly-pink-500 animate-pulse text-base">💖</span>
           </label>
           <input
             type="text"
             id="topic"
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
-            placeholder="e.g., Quantum Computing, Photosynthesis..."
-            className="mt-2 w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-black dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="e.g., French Vocab, DNA Replication, History... 🌸"
+            className="mt-2.5 w-full px-5 py-3 border border-girly-pink-200 dark:border-neutral-800 rounded-2xl bg-white dark:bg-neutral-900 text-neutral-850 dark:text-neutral-100 outline-none placeholder:text-neutral-400 dark:placeholder:text-neutral-500 focus:ring-4 focus:ring-girly-pink-200/50 focus:border-girly-pink-400 font-sans font-medium text-sm transition-all duration-300"
             disabled={isLoading}
           />
         </div>
-        {error && <div className="text-sm text-red-600 dark:text-red-400 font-medium">{error}</div>}
+        
+        {error && (
+          <div className="text-xs text-girly-pink-600 dark:text-girly-pink-400 font-bold bg-girly-pink-50/80 dark:bg-girly-pink-950/20 px-3.5 py-2.5 rounded-xl border border-girly-pink-100 dark:border-girly-pink-900/40">
+            🍭 {error}
+          </div>
+        )}
+        
         <button
           type="submit"
           disabled={isLoading || !topic.trim()}
-          className="w-full px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors cursor-pointer"
+          className="w-full px-6 py-3.5 bg-gradient-to-r from-girly-pink-500 to-girly-pink-650 dark:from-girly-pink-600 dark:to-girly-pink-700 disabled:from-neutral-300 disabled:to-neutral-350 dark:disabled:from-neutral-800 dark:disabled:to-neutral-850 disabled:cursor-not-allowed hover:shadow-[0_6px_20px_rgba(236,72,153,0.3)] disabled:shadow-none text-white font-bold rounded-2xl transition-all duration-300 transform active:scale-95 hover:scale-[1.02] cursor-pointer text-sm font-display flex items-center justify-center gap-2"
         >
-          {isLoading ? 'Generating Live AI Materials...' : 'Generate AI Study Materials'}
+          {isLoading ? (
+            <div className="flex items-center gap-2 animate-pulse">
+              <span className="text-lg animate-spin inline-block">✨</span>
+              <span>Sprinkling AI magic... 🦄</span>
+            </div>
+          ) : (
+            <>
+              <span>Generate AI Study Materials</span>
+              <span>🌸</span>
+            </>
+          )}
         </button>
       </div>
     </form>

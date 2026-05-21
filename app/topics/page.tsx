@@ -29,20 +29,20 @@ function TopicsPageContent() {
 
   if (!currentTopic) {
     return (
-      <div className="relative flex flex-col min-h-screen bg-gray-50 dark:bg-black overflow-hidden">
+      <div className="relative flex flex-col min-h-screen bg-gradient-to-b from-girly-pink-50 via-white to-girly-lavender-50 dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-950 overflow-hidden">
         {/* Visual background glows */}
-        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-blue-400/10 dark:bg-blue-600/5 blur-3xl pointer-events-none"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-purple-400/10 dark:bg-purple-600/5 blur-3xl pointer-events-none"></div>
+        <div className="absolute top-[-5%] left-[-10%] w-[550px] h-[550px] rounded-full bg-girly-pink-300/10 dark:bg-girly-pink-900/5 blur-3xl pointer-events-none"></div>
+        <div className="absolute bottom-[-5%] right-[-10%] w-[550px] h-[550px] rounded-full bg-girly-lavender-350/10 dark:bg-girly-lavender-900/5 blur-3xl pointer-events-none"></div>
         
         <Navbar />
         
         <main className="flex-1 py-16 px-4 relative z-10 max-w-5xl mx-auto w-full">
           <div className="text-center space-y-3 mb-12">
-            <h1 className="text-4xl font-extrabold tracking-tight text-black dark:text-white">
-              📚 Select a Study Topic
+            <h1 className="text-4xl font-extrabold tracking-tight text-neutral-850 dark:text-neutral-50 font-display">
+              🌸 Select a Study Topic 📖
             </h1>
-            <p className="text-gray-555 dark:text-gray-400 max-w-lg mx-auto">
-              Choose one of your active topics to practice flashcards, take quizzes, and track progress.
+            <p className="text-neutral-500 dark:text-neutral-400 max-w-lg mx-auto font-medium text-sm">
+              Choose one of your active topics to practice cute flashcards, take quizzes, and track your study milestones! 🧸
             </p>
           </div>
 
@@ -52,39 +52,39 @@ function TopicsPageContent() {
                 <Link
                   key={t.id}
                   href={`/topics?topicId=${t.id}`}
-                  className="group relative flex flex-col justify-between p-6 bg-white dark:bg-gray-900 border border-gray-150 dark:border-gray-850 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 overflow-hidden"
+                  className="group relative flex flex-col justify-between p-6 bg-white/70 dark:bg-neutral-900/60 border border-girly-pink-100 dark:border-neutral-800 rounded-3xl shadow-sm hover:shadow-[0_8px_30px_rgba(251,113,135,0.08)] transition-all duration-300 hover:-translate-y-1 overflow-hidden cursor-pointer"
                 >
-                  <div className="absolute top-0 left-0 w-1.5 h-full bg-blue-500 rounded-l-2xl"></div>
-                  <div>
-                    <h2 className="text-xl font-bold text-black dark:text-white group-hover:text-blue-550 dark:group-hover:text-blue-400 transition-colors mb-2">
+                  <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-girly-pink-400 to-girly-pink-600 rounded-l-3xl"></div>
+                  <div className="pl-2">
+                    <h2 className="text-xl font-bold text-neutral-800 dark:text-neutral-100 group-hover:text-girly-pink-600 dark:group-hover:text-girly-pink-450 transition-colors mb-2.5 font-display">
                       {t.name}
                     </h2>
-                    <p className="text-sm text-gray-500 dark:text-gray-450 line-clamp-3 leading-relaxed mb-4">
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400 line-clamp-3 leading-relaxed mb-5 font-medium">
                       {t.summary || 'No summary description generated for this topic.'}
                     </p>
                   </div>
-                  <div className="text-xs font-bold text-blue-600 dark:text-blue-400 flex items-center gap-1.5 group-hover:translate-x-1 transition-transform">
-                    Start Learning <span>→</span>
+                  <div className="text-xs font-bold text-girly-pink-650 dark:text-girly-pink-400 flex items-center gap-1.5 group-hover:translate-x-1.5 transition-transform pl-2 font-display">
+                    Start Learning <span>🎀 →</span>
                   </div>
                 </Link>
               ))}
             </div>
           ) : (
-            <div className="text-center bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-8 rounded-2xl shadow-xl max-w-md mx-auto space-y-6">
-              <div className="text-5xl">💡</div>
+            <div className="text-center bg-white/80 dark:bg-neutral-900/80 border border-girly-pink-100 dark:border-neutral-800 p-8 rounded-3xl shadow-xl max-w-md mx-auto space-y-6">
+              <div className="text-6xl animate-bounce">💡</div>
               <div className="space-y-2">
-                <p className="text-xl font-bold text-gray-700 dark:text-gray-300">
+                <p className="text-xl font-bold text-neutral-800 dark:text-neutral-205 font-display">
                   No topics available
                 </p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  You haven't generated any study topics yet. Let's create your first topic!
+                <p className="text-sm text-neutral-500 dark:text-neutral-400 font-medium">
+                  You haven't generated any study topics yet. Let's create your first magical topic!
                 </p>
               </div>
               <Link
                 href="/"
-                className="inline-block px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all cursor-pointer shadow hover:shadow-md"
+                className="inline-block px-7 py-3 bg-gradient-to-r from-girly-pink-500 to-girly-pink-650 hover:shadow-[0_4px_15px_rgba(236,72,153,0.25)] text-white font-bold rounded-2xl transition-all duration-300 cursor-pointer font-display text-sm"
               >
-                Create a Topic
+                Create a Topic ✨
               </Link>
             </div>
           )}
@@ -101,27 +101,26 @@ function TopicsPageContent() {
   };
 
   return (
-    <div className="relative flex flex-col min-h-screen bg-gray-50 dark:bg-black overflow-hidden">
+    <div className="relative flex flex-col min-h-screen bg-gradient-to-b from-girly-pink-50 via-white to-girly-lavender-50 dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-950 overflow-hidden">
       {/* Visual background glows */}
-      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-blue-400/10 dark:bg-blue-600/5 blur-3xl pointer-events-none"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-purple-400/10 dark:bg-purple-600/5 blur-3xl pointer-events-none"></div>
+      <div className="absolute top-[-5%] left-[-10%] w-[550px] h-[550px] rounded-full bg-girly-pink-300/10 dark:bg-girly-pink-900/5 blur-3xl pointer-events-none"></div>
+      <div className="absolute bottom-[-5%] right-[-10%] w-[550px] h-[550px] rounded-full bg-girly-lavender-350/10 dark:bg-girly-lavender-900/5 blur-3xl pointer-events-none"></div>
       
       <Navbar />
       
-      <main className="flex-1 py-12 px-4 relative z-10">
-        <div className="max-w-4xl mx-auto">
+      <main className="flex-1 py-12 px-4 relative z-10 max-w-4xl mx-auto w-full">
+        <div>
           <div className="mb-8">
             <Link
-              href="/"
-              className="text-blue-600 dark:text-blue-400 hover:underline mb-4 inline-block font-semibold"
+              href="/topics"
+              className="text-girly-pink-600 dark:text-girly-pink-400 hover:underline mb-4 inline-block font-bold font-display text-sm flex items-center gap-1"
             >
-              ← Back to Home
+              <span>← Back to Topics</span> 🌸
             </Link>
-            {/* 2. Re-mapped fields to use .name and .summary properties */}
-            <h1 className="text-4xl font-extrabold tracking-tight text-black dark:text-white mb-3">
+            <h1 className="text-4xl font-extrabold tracking-tight text-neutral-850 dark:text-neutral-50 mb-3.5 font-display bg-gradient-to-r from-girly-pink-600 to-girly-lavender-550 bg-clip-text text-transparent">
               {currentTopic.name}
             </h1>
-            <p className="text-gray-600 dark:text-gray-400 text-lg leading-relaxed max-w-3xl">
+            <p className="text-neutral-500 dark:text-neutral-400 text-base leading-relaxed max-w-3xl font-medium">
               {currentTopic.summary}
             </p>
           </div>
@@ -129,45 +128,45 @@ function TopicsPageContent() {
           <div className="flex gap-4 mb-8 flex-wrap">
             <button
               onClick={() => setActiveTab('flashcards')}
-              className={`px-6 py-3 rounded-xl font-semibold transition-all duration-200 cursor-pointer flex items-center gap-2 shadow-sm ${
+              className={`px-6 py-3 rounded-2xl font-bold transition-all duration-300 cursor-pointer flex items-center gap-2 text-sm font-display shadow-sm ${
                 activeTab === 'flashcards'
-                  ? 'bg-gradient-to-r from-blue-600 to-indigo-650 text-white hover:shadow-md'
-                  : 'bg-white dark:bg-gray-900 text-black dark:text-white border border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-850'
+                  ? 'bg-gradient-to-r from-girly-pink-500 to-girly-pink-650 hover:shadow-lg text-white'
+                  : 'bg-white/80 dark:bg-neutral-900/80 text-neutral-800 dark:text-neutral-100 border border-girly-pink-100 dark:border-neutral-850 hover:bg-girly-pink-50/50 dark:hover:bg-neutral-800/40'
               }`}
             >
-              <span>🎯</span> Flashcards ({flashcards.length})
+              <span>🧸</span> Flashcards ({flashcards.length})
             </button>
             <button
               onClick={() => setActiveTab('quiz')}
-              className={`px-6 py-3 rounded-xl font-semibold transition-all duration-200 cursor-pointer flex items-center gap-2 shadow-sm ${
+              className={`px-6 py-3 rounded-2xl font-bold transition-all duration-300 cursor-pointer flex items-center gap-2 text-sm font-display shadow-sm ${
                 activeTab === 'quiz'
-                  ? 'bg-gradient-to-r from-purple-600 to-pink-650 text-white hover:shadow-md'
-                  : 'bg-white dark:bg-gray-900 text-black dark:text-white border border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-850'
+                  ? 'bg-gradient-to-r from-girly-lavender-550 to-girly-pink-500 hover:shadow-lg text-white'
+                  : 'bg-white/80 dark:bg-neutral-900/80 text-neutral-800 dark:text-neutral-100 border border-girly-pink-100 dark:border-neutral-850 hover:bg-girly-pink-50/50 dark:hover:bg-neutral-800/40'
               }`}
             >
-              <span>📝</span> Quiz ({quiz?.questions.length || 0})
+              <span>🍰</span> Quiz ({quiz?.questions.length || 0})
             </button>
           </div>
 
-          <div className="bg-white dark:bg-gray-900/60 backdrop-blur-md rounded-2xl border border-gray-150 dark:border-gray-850 shadow-xl p-6 sm:p-8 min-h-[400px]">
+          <div className="bg-white/80 dark:bg-neutral-900/60 backdrop-blur-md rounded-3xl border border-girly-pink-200/50 dark:border-neutral-850 shadow-xl p-6 sm:p-8 min-h-[400px]">
             {activeTab === 'flashcards' ? (
               flashcards.length > 0 ? (
                 <FlashcardDisplay flashcards={flashcards} />
               ) : (
-                <div className="text-center text-gray-500 dark:text-gray-400 py-16">
-                  <p className="text-2xl mb-2 font-bold">No flashcards available yet</p>
-                  <p className="text-sm opacity-80 max-w-sm mx-auto">
-                    We will generate high-quality flashcards with AI integration.
+                <div className="text-center text-neutral-500 dark:text-neutral-400 py-16">
+                  <p className="text-2xl mb-2 font-extrabold font-display">No flashcards available yet</p>
+                  <p className="text-sm opacity-80 max-w-sm mx-auto font-medium">
+                    We will generate high-quality study cards for you with our magical AI assistant!
                   </p>
                 </div>
               )
             ) : quiz ? (
               <QuizDisplay quiz={quiz} topicName={currentTopic.name} onComplete={handleQuizComplete} />
             ) : (
-              <div className="text-center text-gray-500 dark:text-gray-400 py-16">
-                <p className="text-2xl mb-2 font-bold">No quiz available yet</p>
-                <p className="text-sm opacity-80 max-w-sm mx-auto">
-                  We will generate active recall quizzes with AI integration.
+              <div className="text-center text-neutral-500 dark:text-neutral-400 py-16">
+                <p className="text-2xl mb-2 font-extrabold font-display">No quiz available yet</p>
+                <p className="text-sm opacity-80 max-w-sm mx-auto font-medium">
+                  We will generate active recall quizzes for you with our magical AI assistant!
                 </p>
               </div>
             )}

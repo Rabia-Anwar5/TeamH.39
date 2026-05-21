@@ -1,20 +1,22 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Quicksand, Comfortaa } from "next/font/google";
 import "./globals.css";
 import { StudyProvider } from "@/app/context/StudyContext";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const quicksand = Quicksand({
+  variable: "--font-quicksand",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const comfortaa = Comfortaa({
+  variable: "--font-comfortaa",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
-  title: "Study Buddy - AI Learning Assistant",
+  title: "✨ Study Buddy 💖 - AI Learning Assistant",
   description: "Learn effectively with AI-generated flashcards, quizzes, and progress tracking",
 };
 
@@ -26,9 +28,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${quicksand.variable} ${comfortaa.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col bg-amber-50/10">
         <StudyProvider>
           {children}
         </StudyProvider>
