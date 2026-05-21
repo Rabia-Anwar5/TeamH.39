@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 export async function POST(request: NextRequest) {
   try {
     // Validate API key
@@ -14,6 +10,10 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
+
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
 
     const { topicName, topicId } = await request.json();
 
@@ -48,7 +48,7 @@ Requirements:
 
 Only respond with the JSON array, no other text.`;
 
-    const message = await openai.messages.create({
+    const completion = await openai.chat.completions.create({
       model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
       max_tokens: 1024,
       messages: [
@@ -60,13 +60,7 @@ Only respond with the JSON array, no other text.`;
     });
 
     // Extract text content
-    const content = message.content[0];
-    if (content.type !== 'text') {
-      throw new Error('Unexpected response type from OpenAI');
-    }
-
-    // Parse the response - extract JSON from potential markdown code blocks
-    let jsonText = content.text.trim();
+    let jsonText = (completion.choices[0].message.content || '').trim();
     
     // Remove markdown code blocks if present
     if (jsonText.includes('```json')) {

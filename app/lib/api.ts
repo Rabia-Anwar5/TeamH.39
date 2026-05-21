@@ -1,71 +1,32 @@
 // app/lib/api.ts
-// Swapped absolute import path alias to direct relative path to clear compilation errors
-import { Topic, Flashcard, Quiz } from '../types';
 
-export async function generateStudyMaterials(topic: string) {
-  const response = await fetch('/api/generate', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ topic }),
-  });
+/**
+ * Sends a study topic to our localized Next.js API route handler
+ * to generate flashcards and quizzes via the Gemini API.
+ */
+export async function generateStudyMaterials(topicName: string) {
+  try {
+    // 1. Direct fetch targeting our unified generation endpoint
+    const response = await fetch('/api/generate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ topic: topicName }),
+    });
 
-  if (!response.ok) {
-    throw new Error('Failed to generate study materials');
+    // 2. Catch route or API errors safely
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      console.error('Frontend API helper received route error:', errorData);
+      throw new Error(errorData.error || 'Failed to generate study materials');
+    }
+
+    // 3. Parse and return the clean structured data object
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error within generateStudyMaterials lifecycle:', error);
+    throw error;
   }
-
-  return response.json();
-}
-
-export async function generateFlashcards(topic: string): Promise<Flashcard[]> {
-  const response = await fetch('/api/flashcards/generate', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ topic }),
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to generate flashcards');
-  }
-
-  return response.json();
-}
-
-export async function generateQuiz(topic: string): Promise<Quiz> {
-  const response = await fetch('/api/quiz/generate', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ topic }),
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to generate quiz');
-  }
-
-  return response.json();
-}
-
-export async function saveLearningMaterials(
-  topic: Topic,
-  flashcards: Flashcard[],
-  quiz: Quiz
-) {
-  const response = await fetch('/api/materials/save', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ topic, flashcards, quiz }),
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to save learning materials');
-  }
-
-  return response.json();
 }

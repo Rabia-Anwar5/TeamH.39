@@ -1,5 +1,5 @@
-// This file will contain the main layout and navigation
 import React from 'react';
+import Link from 'next/link';
 
 export default function Navbar() {
   return (
@@ -12,15 +12,15 @@ export default function Navbar() {
             </h1>
           </div>
           <div className="flex space-x-4">
-            <a href="/" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white">
+            <Link href="/" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white">
               Home
-            </a>
-            <a href="/topics" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white">
+            </Link>
+            <Link href="/topics" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white">
               Topics
-            </a>
-            <a href="/progress" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white">
+            </Link>
+            <Link href="/progress" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white">
               Progress
-            </a>
+            </Link>
           </div>
         </div>
       </div>

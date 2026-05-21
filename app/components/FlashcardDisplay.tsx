@@ -3,6 +3,7 @@
 
 import React, { useState } from 'react';
 import { Flashcard } from '../types';
+import { useStudy } from '../context/StudyContext';
 
 interface FlashcardDisplayProps {
   flashcards: Flashcard[];
@@ -11,6 +12,7 @@ interface FlashcardDisplayProps {
 export default function FlashcardDisplay({ flashcards }: FlashcardDisplayProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
+  const { toggleFlashcardLearned } = useStudy();
 
   if (!flashcards || flashcards.length === 0) {
     return (
@@ -46,15 +48,31 @@ export default function FlashcardDisplay({ flashcards }: FlashcardDisplayProps) 
       {/* Flipping Card Container */}
       <div 
         onClick={() => setIsFlipped(!isFlipped)}
-        className="w-full h-56 cursor-pointer perspective-1000 group outline-none"
+        className="w-full h-56 cursor-pointer perspective-1000 group outline-none animate-in fade-in zoom-in-95 duration-300"
       >
         <div className={`relative w-full h-full duration-500 transform-style-3d shadow-md hover:shadow-xl border border-gray-100 dark:border-gray-800 rounded-2xl transition-all ${
-          isFlipped ? 'rotate-y-180 bg-blue-50/20 dark:bg-gray-800' : 'bg-white dark:bg-gray-850'
+          isFlipped ? 'rotate-y-180 bg-blue-50/20 dark:bg-gray-850' : 'bg-white dark:bg-gray-900'
         }`}>
           {/* FRONT Side */}
           <div className="absolute inset-0 w-full h-full p-6 flex flex-col justify-center items-center backface-hidden">
+            {currentCard.id && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleFlashcardLearned(currentCard.id!);
+                }}
+                className={`absolute top-4 right-4 z-20 px-3 py-1 text-xs font-semibold rounded-full border transition-all duration-300 flex items-center gap-1.5 cursor-pointer ${
+                  currentCard.isLearned
+                    ? 'bg-emerald-500/10 border-emerald-500/35 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 shadow-sm'
+                    : 'bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:border-blue-500/35 hover:text-blue-600 dark:hover:text-blue-400'
+                }`}
+              >
+                <span>{currentCard.isLearned ? '✓' : '○'}</span>
+                <span>{currentCard.isLearned ? 'Learned' : 'Mark Learned'}</span>
+              </button>
+            )}
             <span className="text-xs uppercase text-gray-400 tracking-widest font-bold mb-3 block">Concept / Question</span>
-            <p className="text-xl font-semibold text-center text-black dark:text-white max-w-md balance leading-relaxed">
+            <p className="text-xl font-semibold text-center text-black dark:text-white max-w-md balance leading-relaxed px-4">
               {currentCard.front}
             </p>
             <span className="text-xs text-gray-400 mt-6 group-hover:text-blue-500 transition-colors">
@@ -64,8 +82,24 @@ export default function FlashcardDisplay({ flashcards }: FlashcardDisplayProps) 
 
           {/* BACK Side */}
           <div className="absolute inset-0 w-full h-full p-6 flex flex-col justify-center items-center backface-hidden rotate-y-180 bg-blue-50/10 dark:bg-blue-950/10">
+            {currentCard.id && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleFlashcardLearned(currentCard.id!);
+                }}
+                className={`absolute top-4 right-4 z-20 px-3 py-1 text-xs font-semibold rounded-full border transition-all duration-300 flex items-center gap-1.5 cursor-pointer ${
+                  currentCard.isLearned
+                    ? 'bg-emerald-500/10 border-emerald-500/35 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 shadow-sm'
+                    : 'bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:border-blue-500/35 hover:text-blue-600 dark:hover:text-blue-400'
+                }`}
+              >
+                <span>{currentCard.isLearned ? '✓' : '○'}</span>
+                <span>{currentCard.isLearned ? 'Learned' : 'Mark Learned'}</span>
+              </button>
+            )}
             <span className="text-xs uppercase text-blue-500 dark:text-blue-400 tracking-widest font-bold mb-3 block">Answer / Insight</span>
-            <p className="text-lg text-center text-gray-800 dark:text-gray-200 max-w-md leading-relaxed">
+            <p className="text-lg text-center text-gray-800 dark:text-gray-200 max-w-md leading-relaxed px-4">
               {currentCard.back}
             </p>
             <span className="text-xs text-gray-400 mt-6">

@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import Navbar from '@/app/components/Navbar';
 import ProgressTracker from '@/app/components/ProgressTracker';
 import { useStudy } from '@/app/context/StudyContext';
@@ -20,12 +21,12 @@ export default function ProgressPage() {
             <p className="text-xl text-gray-600 dark:text-gray-400 mb-4">
               No progress yet. Start studying to track your progress!
             </p>
-            <a
+            <Link
               href="/"
               className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
             >
               Go to Home
-            </a>
+            </Link>
           </div>
         )}
       </main>

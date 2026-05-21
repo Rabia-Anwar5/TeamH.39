@@ -6,6 +6,7 @@ export interface Flashcard {
   topicId?: string;
   front: string;
   back: string;
+  isLearned?: boolean;
 }
 
 // 2. Individual Quiz Question Interface

@@ -2,82 +2,18 @@
 'use client';
 
 import React, { useState } from 'react';
-// 1. Fixed path imports to direct relative paths
+import { useRouter } from 'next/navigation';
 import { useStudy } from '../context/StudyContext';
-import { Quiz, QuizQuestion } from '../types';
-import { generateId } from '../lib/storage';
+import { generateStudyMaterials } from '../lib/api';
+import { getTopics, getFlashcards, getQuizzes, saveTopics, saveFlashcards, saveQuizzes, generateId } from '../lib/storage';
+import { Flashcard, QuizQuestion, Quiz, Topic } from '../types';
 
 export default function TopicInput() {
+  const router = useRouter();
   const [topic, setTopic] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const { addTopic, addFlashcard, addQuiz } = useStudy();
-
-  const generateMockFlashcards = (topicName: string, topicId: string) => {
-    const mockQuestions = [
-      `What is ${topicName}?`,
-      `Explain the key concepts of ${topicName}`,
-      `What are the main characteristics of ${topicName}?`,
-      `How does ${topicName} relate to real-world applications?`,
-      `What are common misconceptions about ${topicName}?`,
-    ];
-
-    const mockAnswers = [
-      `${topicName} is a comprehensive subject covering various important aspects and fundamental principles.`,
-      `The key concepts include foundational theories, practical applications, and interconnected ideas that build upon each other.`,
-      `Main characteristics include structure, function, relevance, and applicability in different contexts.`,
-      `${topicName} has numerous applications in everyday life, industry, and scientific research.`,
-      `Common misconceptions often relate to oversimplified views or incomplete understanding of complex relationships.`,
-    ];
-
-    mockQuestions.forEach((q, idx) => {
-      addFlashcard(topicId, q, mockAnswers[idx]);
-    });
-  };
-
-  const generateMockQuiz = (topicName: string, topicId: string) => {
-    // 2. Aligned this array strictly with the QuizQuestion type contract
-    const mockQuestions: QuizQuestion[] = [
-      {
-        question: `Which statement best describes ${topicName}?`,
-        options: [
-          'Option A: A comprehensive approach to understanding',
-          'Option B: A limited perspective on the subject',
-          'Option C: An outdated theory no longer relevant',
-          'Option D: A basic introduction only',
-        ],
-        correctAnswer: 'Option A: A comprehensive approach to understanding',
-      },
-      {
-        question: `What is the primary focus of ${topicName}?`,
-        options: [
-          'Understanding foundational concepts',
-          'Memorizing definitions',
-          'Ignoring practical applications',
-          'Avoiding complex topics',
-        ],
-        correctAnswer: 'Understanding foundational concepts',
-      },
-      {
-        question: `How can ${topicName} be applied?`,
-        options: [
-          'In various real-world contexts and industries',
-          'Only in academic settings',
-          'Not at all in practice',
-          'Limited to specific scenarios',
-        ],
-        correctAnswer: 'In various real-world contexts and industries',
-      },
-    ];
-
-    const quiz: Quiz = {
-      id: generateId(),
-      topicId,
-      questions: mockQuestions,
-    };
-
-    addQuiz(quiz);
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -91,24 +27,57 @@ export default function TopicInput() {
     setIsLoading(true);
 
     try {
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const aiData = await generateStudyMaterials(topic.trim());
 
-      // Create new topic
-      const newTopicId = generateId();
-      addTopic(topic, `Study materials for ${topic}`);
+      if (!aiData || !aiData.topic || !aiData.flashcards || !aiData.quiz) {
+        throw new Error('Invalid content payload returned from synthesis layer');
+      }
 
-      // Generate mock flashcards and quiz
-      generateMockFlashcards(topic, newTopicId);
-      generateMockQuiz(topic, newTopicId);
+      const targetTopicId = generateId();
 
-      // Navigate to topics page
-      window.location.href = `/topics?topicId=${newTopicId}`;
+      // 1. Build unified local object representations matching types
+      const newTopic: Topic = {
+        id: targetTopicId,
+        name: aiData.topic.name,
+        summary: aiData.topic.summary,
+        createdAt: new Date().toISOString()
+      };
 
-      setTopic('');
-    } catch (err) {
-      setError('Failed to generate study materials. Please try again.');
-      console.error(err);
+      const newCards: Flashcard[] = aiData.flashcards.map((card: any) => ({
+        id: generateId(),
+        topicId: targetTopicId,
+        front: card.front,
+        back: card.back
+      }));
+
+      const typedQuestions: QuizQuestion[] = aiData.quiz.questions.map((q: any) => ({
+        question: q.question,
+        options: q.options,
+        correctAnswer: q.correctAnswer
+      }));
+
+      const newQuiz: Quiz = {
+        id: generateId(),
+        topicId: targetTopicId,
+        questions: typedQuestions
+      };
+
+      // 2. Direct atomic local storage write to secure against early page unmounts
+      saveTopics([...getTopics(), newTopic]);
+      saveFlashcards([...getFlashcards(), ...newCards]);
+      saveQuizzes([...getQuizzes(), newQuiz]);
+
+      // 3. Keep internal React runtime context fully synced (with pre-allocated ID)
+      addTopic(aiData.topic.name, aiData.topic.summary, targetTopicId);
+      aiData.flashcards.forEach((c: any) => addFlashcard(targetTopicId, c.front, c.back));
+      addQuiz(newQuiz);
+
+      // 4. Smooth routing transfer over to our materials tab view
+      router.push(`/topics?topicId=${targetTopicId}`);
+
+    } catch (err: any) {
+      setError('Failed to generate high-quality materials. Check your GEMINI_API_KEY config entry.');
+      console.error('AI Lifecycle Execution Fault:', err);
     } finally {
       setIsLoading(false);
     }
@@ -126,18 +95,18 @@ export default function TopicInput() {
             id="topic"
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
-            placeholder="e.g., World War 2, Photosynthesis, Python Basics..."
-            className="mt-2 w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+            placeholder="e.g., Quantum Computing, Photosynthesis..."
+            className="mt-2 w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-black dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
             disabled={isLoading}
           />
         </div>
-        {error && <div className="text-sm text-red-600 dark:text-red-400">{error}</div>}
+        {error && <div className="text-sm text-red-600 dark:text-red-400 font-medium">{error}</div>}
         <button
           type="submit"
           disabled={isLoading || !topic.trim()}
           className="w-full px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors cursor-pointer"
         >
-          {isLoading ? 'Generating...' : 'Generate Study Materials'}
+          {isLoading ? 'Generating Live AI Materials...' : 'Generate AI Study Materials'}
         </button>
       </div>
     </form>

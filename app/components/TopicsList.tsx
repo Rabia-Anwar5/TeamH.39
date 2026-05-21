@@ -22,7 +22,7 @@ export default function TopicsList() {
             href={`/topics?topicId=${topic.id}`}
             className="flex-1 text-left text-gray-800 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400"
           >
-            <p className="font-medium">{topic.title}</p>
+            <p className="font-medium">{topic.name}</p>
           </a>
           <button
             onClick={() => deleteTopic(topic.id)}
